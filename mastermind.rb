@@ -22,7 +22,7 @@ class Computer
     end
     def self.guess
         colors = [RED, GREEN, BLUE, YELLOW, PINK, WHITE]
-        colors.sample(4)
+        Array.new(4) {colors.sample}
     end
 end
 
@@ -89,7 +89,7 @@ def choose_difficulty
         puts "Type 'h' or 'e' to choose difficulty."
         difficulty = gets.chomp.downcase
     end
-    puts "Choose 4 colors to guess. \nType the colors separated by spaces. \nChoices are red, green, blue, yellow, pink, and white. \nEnter the first letter of each color to select."
+    puts "Choose 4 colors to guess. \nChoices are red, green, blue, yellow, pink, and white. \nEnter the first letter of each color separated by spaces to select."
     if difficulty == "h"
         code = Computer.choose_hard_code
     elsif difficulty == "e"
@@ -111,7 +111,7 @@ def player_guess(code)
         end
         accumulator += 1
         if accumulator == 12
-            puts "You Lost"
+            puts "The code was #{code.join("  ")}. \nYou Lost."
         end
     end
 end
@@ -119,8 +119,12 @@ end
 #computer guesses players code
 def computer_guess(code)
     accumulator = 0
+    computer_guess = Computer.guess
     12.times do
-        computer_guess = Computer.guess
+        computer_guess = computer_guess.sample($feedback.length)
+        while computer_guess.length < 4 do
+            computer_guess.push(Computer.guess.sample(1)[0])
+        end
         puts computer_guess.join("  ") + "   " + check_guess(computer_guess, code).join("  ")
         if computer_guess == code
             puts "The computer guessed your code. You lose."
@@ -141,7 +145,6 @@ while choice !~ /\A[mg]\z/ do
 end
 if choice == 'g'
     computer_code = choose_difficulty
-    puts computer_code
     player_guess(computer_code)
 elsif choice == 'm'
     player_code = User.choose_code
