@@ -14,7 +14,7 @@ SMALL_WHITE = "\u25CF".white
 class Computer
     def self.choose_code
         colors = [RED, GREEN, BLUE, YELLOW, PINK, WHITE]
-        colors.sample(4)
+        Array.new(4) {colors.sample}
     end
 end
 
@@ -35,11 +35,14 @@ end
 # function for checking guess
 def check_guess(guess, code)
     feedback = []
+    already_checked = []
     guess.each_with_index do |color, index|
         if color == code[index]
             feedback.unshift(SMALL_RED)
-        elsif code.include?(color)
+            already_checked.push(color)
+        elsif code.include?(color) && already_checked.count(color) < code.count(color)
             feedback.push(SMALL_WHITE)
+            already_checked.push(color)
         end
     end
     return feedback
